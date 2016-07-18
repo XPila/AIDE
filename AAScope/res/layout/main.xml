@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/llMain"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="left"
+    android:orientation="horizontal"
+	android:keepScreenOn="true" >
+	<LinearLayout 
+		android:id="@+id/llMenu"
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
+		android:gravity="top"
+		android:orientation="vertical"
+		android:visibility="gone">
+		<TextView
+			style="@style/TextView_caption"
+			android:text="Sampling"/>
+		<LinearLayout android:id="@+id/llSampling"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:gravity="left"
+			android:orientation="horizontal">
+			<Button android:id="@+id/btSamplingOn"
+				style="@style/Button_minus"
+				android:text="ON"
+				android:onClick="SamplingOn"
+			/>
+			<Button android:id="@+id/btSamplingOff"
+				style="@style/Button_minus"
+				android:text="OFF"
+				android:onClick="SamplingOff"
+			/>
+		</LinearLayout>
+		<TextView
+			style="@style/TextView_caption"
+			android:text="Time/div [ms]"/>
+		<TextView android:id="@+id/tvTimeDiv"
+			style="@style/TextView_value"
+			android:text="1"/>
+		<LinearLayout android:id="@+id/llTimeDiv"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:gravity="left"
+			android:orientation="horizontal">
+			<Button
+				style="@style/Button_minus"
+				android:onClick="TimeDivMinus"/>
+			<Button
+				style="@style/Button_plus"
+				android:onClick="TimeDivPlus"/>
+		</LinearLayout>
+		<TextView
+			style="@style/TextView_caption"
+			android:text="Level/div [1]" />
+		<TextView android:id="@+id/tvLevelDiv"
+			style="@style/TextView_value"
+			android:text="8192"/>
+		<LinearLayout android:id="@+id/llLevelDiv"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:gravity="left"
+			android:orientation="horizontal" >
+			<Button
+				style="@style/Button_minus"
+				android:onClick="LevelDivMinus"/>
+			<Button
+				style="@style/Button_plus"
+				android:onClick="LevelDivPlus"/>
+		</LinearLayout>
+		<Button
+			style="@style/Button_startstop"
+			android:text="Test"
+			android:onClick="Test"/>		
+		<com.xpila.aascope.CtlTrigger android:id="@+id/ctTrigger"
+			android:layout_width="100px"
+			android:layout_height="100px"
+			android:background="#c04000"
+		/>	
+	</LinearLayout>
+	<LinearLayout android:id="@+id/llView"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:gravity="left"
+		android:orientation="horizontal"
+		android:visibility="visible">
+		<TextView android:id="@+id/tv"
+			android:layout_width="wrap_content"
+			android:layout_height="fill_parent"
+			android:width="240px"
+			android:minHeight="24px"
+			android:background="#c0c0c0"
+			android:textColor="#101010"
+			android:textSize="10px"
+			android:text=""
+			android:visibility="gone"/>
+		<!--com.xpila.aascope.PCMView android:id="@+id/vPCM"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:visibility="gone"
+		/-->
+		<com.xpila.support.pcm.PCMScopeView android:id="@+id/vScope"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:visibility="visible"
+		/>
+	</LinearLayout>
+	<LinearLayout android:id="@+id/llGen"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:gravity="left"
+		android:orientation="horizontal"
+		android:visibility="gone">
+	</LinearLayout>
+	
+</LinearLayout>
+<!--
+ll	LinearLayout
+tv	TextView
+et	EditText
+bt	Button
+ll	LinearLayout
+ll	LinearLayout
+-->

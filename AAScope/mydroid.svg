@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<svg version="1.1" 
+ xmlns="http://www.w3.org/2000/svg"
+ xmlns:xlink="http://www.w3.org/1999/xlink"
+ width="144"
+ height="144"
+ viewBox="0 0 100 100"
+>
+ <g fill="#4C2" stroke="#4C2" stroke-linejoin="round" stroke-linecap="round">
+  <g id="hands">
+   <path id="l_hand" d="M16,40v24" stroke-width="12" transform="rotate(0 15,40)"/>
+   <path id="r_hand" d="M84,40v24" stroke-width="12" transform="rotate(0 85,40)"/>
+  </g>
+  <g id="foots">
+   <path id="l_foot" d="M40,68v24" stroke-width="12"/>
+   <path id="r_foot" d="M60,68v24" stroke-width="12"/>
+  </g>
+  <g id="body">
+   <path d="M25,35h50v10h-50z" stroke="none"/>
+   <path d="M31,42v31h38v-31z" stroke-width="12"/>
+  </g>
+  <g id="head">
+   <path id="l_ant" d="M30,5l6,10" stroke-width="2"/>
+   <path id="r_ant" d="M70,5l-6,10" stroke-width="2"/>
+   <path id="head" d="M25,33c0-31,50-31,50,0" stroke="none"/>
+   <g id="eyes">
+    <g id="l_eye">
+     <circle cx="40" cy="22" r="7" fill="#FFF" stroke="#111" stroke-width="1"/>
+     <circle cx="38" cy="20" r="4" fill="#000" stroke="none"/>
+    </g>
+    <g id="r_eye">
+     <circle cx="60" cy="22" r="7" fill="#FFF" stroke="#111" stroke-width="1"/>
+     <circle cx="62" cy="24" r="4" fill="#000" stroke="none"/>
+    </g>
+   </g>
+  </g>
+ </g>
+ <g id="scope">
+  <circle cx="50" cy="60" r="24" fill="#AAA" stroke="#444" stroke-width="2"/>
+  <path d="M28,60l4,5l4,-20l4,30l4,-35l4,25l4,-15l4,20l4,-20l4,10l4,-5l4,10" fill="none" stroke="#EE2" stroke-width="2" />
+  <line x1="27" y1="60" x2="74" y2="60" stroke="#222" stroke-width="1"/>
+ </g>
+</svg>

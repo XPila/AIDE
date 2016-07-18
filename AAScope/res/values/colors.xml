@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<color name="Scope_BkGnd">#ff606060</color>
+	<color name="Scope_Grid">#ff404040</color>
+	<color name="Scope_Samples">#ff00c000</color>
+</resources>
