@@ -17,6 +17,8 @@ implements IPCMProducer
 	public boolean pause()
 	{	mRecord.stop();
 		return (mRecord.getRecordingState() == AudioRecord.RECORDSTATE_STOPPED); }
+	public IPCMData outputData()
+	{ return null; }	
 	public PCMFormat outputFormat()
 	{ return mFormat; }
 	public int read(Object buffer, int position, int size)

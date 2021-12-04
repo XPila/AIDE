@@ -2,6 +2,7 @@ package com.xpila.support.pcm;
 
 
 import android.media.AudioRecord;
+import com.xpila.support.log.Log;
 
 
 public abstract class PCMThreadedRecorder
@@ -11,28 +12,63 @@ extends PCMRecorder
 	protected boolean mRecording = false;
 	protected boolean mResult = false;
 	protected PCMThreadedPlayer mSlavePlayer = null;
+	protected boolean mPauseLoop = false;
 	public boolean start()
 	{
 		if (mRecording) return true;
 		mThread = new RecorderThread();
 		mThread.start();
 		synchronized (mThread)
-		{ try
-			{ mThread.wait(); }
+		{
+			try { mThread.wait(); }
 			catch (InterruptedException e)
-			{ e.printStackTrace(); } }
+			{ e.printStackTrace(); }
+		}
 		return mResult;
 	}
 	public boolean stop()
 	{
 		if (!mRecording) return true;
 		mRecording = false;
-		try
-		{ mThread.join(); }
+		try { mThread.join(); }
 		catch (InterruptedException e)
 		{ e.printStackTrace(); }
 		mThread = null;
 		return mResult;
+	}
+	public boolean pauseLoop()
+	{
+		if (!mRecording) return false;
+		if (mPauseLoop) return true;
+		mPauseLoop = true;
+		synchronized (mThread)
+		{
+			try
+			{
+				mThread.wait();
+				return true;
+			}
+			catch (InterruptedException e)
+			{ e.printStackTrace(); }
+		}
+		return false;		
+	}
+	public boolean continueLoop()
+	{
+		if (!mRecording) return false;
+		if (!mPauseLoop) return true;
+		synchronized (mThread)
+		{
+			mThread.notify();
+			try
+			{
+				mThread.wait();
+				return true;
+			}
+			catch (InterruptedException e)
+			{ e.printStackTrace(); }
+		}
+		return false;		
 	}
 	protected boolean startRecording()
 	{
@@ -54,6 +90,7 @@ extends PCMRecorder
 	{
 		@Override public void run()
 		{
+			Log.log("Recorder run");
 			startRecording();
 			if (mSlavePlayer != null)
 				mSlavePlayer.startPlaying();
@@ -64,10 +101,22 @@ extends PCMRecorder
 				recording();
 				if (mSlavePlayer != null)
 					mSlavePlayer.playing();
+				if (mPauseLoop)
+					synchronized (this)
+					{
+						Log.log("mPauseLoop = true");
+						notify();
+						try { wait(); }
+						catch (InterruptedException e)
+						{ e.printStackTrace(); }
+						mPauseLoop = false;
+						notify();
+					}
 			}
 			stopRecording();
 			if (mSlavePlayer != null)
 				mSlavePlayer.stopPlaying();
+			Log.log("Recorder end");
 		}
 	}
 }

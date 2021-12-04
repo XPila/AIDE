@@ -14,9 +14,8 @@ implements IPCMConsumer
 	public boolean stop()
 	{	mTrack.stop();
 		return (mTrack.getPlayState() == AudioTrack.PLAYSTATE_STOPPED); }
-	public boolean pause()
-	{	mTrack.pause();
-		return (mTrack.getPlayState() == AudioTrack.PLAYSTATE_PAUSED); }
+	public IPCMData inputData()
+	{ return null; }
 	public PCMFormat inputFormat()
 	{ return mFormat; }
 	public int write(Object buffer, int position, int size)

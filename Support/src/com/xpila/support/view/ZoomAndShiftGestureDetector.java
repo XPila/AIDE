@@ -17,6 +17,9 @@ implements View.OnTouchListener, DragAndScaleGestureDetector.Listener, ScaleGest
 	public final static int SHIFTX = 16;
 	public final static int SHIFTY = 32;
 	public final static int SHIFTXY = SHIFTX | SHIFTY;
+	public static final int SHIFTXCENTER = 64;
+	public static final int SHIFTYCENTER = 128;
+	public static final int SHIFTXYCENTER = SHIFTXCENTER | SHIFTYCENTER;
 	public interface Listener
 	{
 		public void onZoom(float zoomX, float zoomY, float shiftX, float shiftY);
@@ -43,6 +46,8 @@ implements View.OnTouchListener, DragAndScaleGestureDetector.Listener, ScaleGest
 	public float beginShiftX = 0;
 	public float beginShiftY = 0;
 	public boolean uniformZoom = false;
+	public float scrollFactor = 0;
+	
 	public ZoomAndShiftGestureDetector(Listener listener, View v, float deltaMin)
 	{
 		mDetector = new DragAndScaleGestureDetector(this, null, deltaMin);
@@ -56,6 +61,30 @@ implements View.OnTouchListener, DragAndScaleGestureDetector.Listener, ScaleGest
 		if (mListener == null) return false;
 		return mDetector.onTouch(v, event);
 	}
+	public boolean onGenericMotion(View v, MotionEvent event)
+	{
+		if (event.getAction() == MotionEvent.ACTION_SCROLL)
+		{
+			float x = event.getAxisValue(MotionEvent.AXIS_X);
+			float y = event.getAxisValue(MotionEvent.AXIS_Y);
+			float vscroll = event.getAxisValue(MotionEvent.AXIS_VSCROLL);
+			float hscroll = event.getAxisValue(MotionEvent.AXIS_HSCROLL);
+			float scroll = vscroll;
+			float zX = zoomX;
+			float zY = zoomY;
+			float sX = shiftX;
+			float sY = shiftY;
+			float dX = (1 + (scroll * scrollFactor));
+			float dY = (1 + (scroll * scrollFactor));
+			beginZoomX = zX;
+			beginZoomY = zY;
+			beginShiftX = sX;
+			beginShiftY = sY;
+			scale(v, x, y, 1, 1, x, y, dX, dY);
+			return true;
+		}
+		return false;
+	}	
 	public void onDragBegin(View v, float x0, float y0, float x, float y)
 	{
 		beginShiftX = shiftX;
@@ -120,5 +149,53 @@ implements View.OnTouchListener, DragAndScaleGestureDetector.Listener, ScaleGest
 		if ((mode & SHIFTY) != 0)
 			shiftY = (y0 + beginShiftY) * zoomY / beginZoomY - y;
 		if (mListener != null) mListener.onZoom(zoomX, zoomY, shiftX, shiftY);
+	}
+	public void updateZoomRangeUni(float zoom, float minZoom, float maxZoom)
+	{
+		zoomX = zoom;
+		zoomY = zoom;
+		minZoomX = minZoom;
+		minZoomY = minZoom;
+		maxZoomX = maxZoom;
+		maxZoomY = maxZoom;
+		if (zoomX < minZoomX) zoomX = minZoomX;
+		if (zoomX > maxZoomX) zoomX = maxZoomX;
+		if (zoomY < minZoomY) zoomY = minZoomY;
+		if (zoomY > maxZoomY) zoomY = maxZoomY;
+	}
+	public void updateShiftRange(float w, float h, float wz, float hz)
+	{
+		if ((w * h) == 0) return;
+		if ((wz * hz) == 0) return;
+		minShiftX = 0;
+		minShiftY = 0;
+		maxShiftX = wz - w;
+		maxShiftY = hz - h;
+		if (maxShiftX < 0)
+		{
+			if ((mode & SHIFTXCENTER) != 0)
+			{
+				maxShiftX = maxShiftX / 2;
+				minShiftX = maxShiftX;
+			}
+			else
+				maxShiftX = 0;
+			//mDetector.shiftX = mDetector.minShiftX;
+		}
+		if (maxShiftY < 0)
+		{
+			if ((mode & SHIFTYCENTER) != 0)
+			{
+				maxShiftY = maxShiftY / 2;
+				minShiftY = maxShiftY;
+			}
+			else
+				maxShiftY = 0;
+			//mDetector.shiftY = mDetector.minShiftY;
+		}
+		if (shiftX > maxShiftX) shiftX = maxShiftX;
+		if (shiftY > maxShiftY) shiftY = maxShiftY;
+		if (shiftX < minShiftX) shiftX = minShiftX;
+		if (shiftY < minShiftY) shiftY = minShiftY;
 	}
 }

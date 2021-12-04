@@ -1,5 +1,7 @@
 package com.xpila.support.pcm;
 
+import com.xpila.support.log.Log;
+
 
 public class PCMBufferedRecorder
 extends PCMThreadedRecorder
@@ -38,25 +40,35 @@ extends PCMThreadedRecorder
 	{
 		int readed = 0;
 		int written = 0;
+		int chunkSize = mChunkSize;
 		if (mFormat.bits == 8)
 		{
-			readed = mRecord.read(mByteBuffer, 0, mChunkSize);
+			readed = mRecord.read(mByteBuffer, 0, chunkSize);
 			if (mOut != null)
 				if (readed > 0)
 					written = mOut.write(mByteBuffer, 0, readed);
-			if (readed < mChunkSize)
+			if (readed < chunkSize)
+			{
+				Log.log("readed < chunkSize (readed=%d chunkSize=%d)", readed, chunkSize);
 				mRecording = false;
+			}
 		}
 		if (mFormat.bits == 16)
 		{
-			readed = mRecord.read(mShortBuffer, 0, mChunkSize / 2);
+			readed = mRecord.read(mShortBuffer, 0, chunkSize / 2);
 			if (mOut != null)
 				if (readed > 0)
 					written = mOut.write(mShortBuffer, 0, readed);
-			if (readed < mChunkSize / 2)
+			if (readed < chunkSize / 2)
+			{
+				Log.log("readed < chunkSize / 2 (readed=%d chunkSize=%d)", readed, chunkSize);
 				mRecording = false;
+			}
 		}
 		if (readed != written)
+		{
+			Log.log("readed != written (readed=%d, written=%d)", readed, written);
 			mRecording = false;
+		}
 	}
 }

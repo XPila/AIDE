@@ -1,6 +1,7 @@
 Manifest-Version: 1.0
-Archiver-Version: TCMD
+Archiver-Version: ZIP
+Name: com.xpila.support
 Created-By: XPila
 Built-By: XPila
 Build-Jdk: 1.6.0-google-v4
-
+

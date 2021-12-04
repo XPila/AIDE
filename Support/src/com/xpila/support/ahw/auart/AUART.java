@@ -299,6 +299,8 @@ public class AUART
 		{ return mEnc[channel].getTotalSamples(); }
 		public OutputStream getOutput(int channel)
 		{ return mPipe[channel].out; }
+		public IPCMData outputData()
+		{ return null; }
 		public PCMFormat outputFormat()
 		{ return mFormat; }
 		public int read(Object buffer, int position, int size)
@@ -368,6 +370,8 @@ public class AUART
 		{ return mDec[channel].getTotalSamples(); }
 		public InputStream getInput(int channel)
 		{ return mPipe[channel].in; }
+		public IPCMData inputData()
+		{ return null; }		
 		public PCMFormat inputFormat()
 		{ return mFormat; }
 		public int write(Object buffer, int position, int size)

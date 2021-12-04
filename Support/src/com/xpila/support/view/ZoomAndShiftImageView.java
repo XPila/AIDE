@@ -4,170 +4,97 @@ package com.xpila.support.view;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.MotionEvent;
-import android.widget.ImageView;
-import android.graphics.drawable.Drawable;
+import android.graphics.Paint;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.drawable.Drawable;
+import com.xpila.support.log.Log;
+import com.xpila.support.view.ZoomAndShiftView;
 import com.xpila.support.view.ZoomAndShiftGestureDetector;
 
 
 public class ZoomAndShiftImageView
-extends ImageView
+extends ZoomAndShiftView
 implements ZoomAndShiftGestureDetector.Listener
 {
-	protected int mWidth = 0;
-	protected int mHeight = 0;
 	protected Drawable mImage = null;
 	protected int mImageWidth = 0;
 	protected int mImageHeight = 0;
-	protected ZoomAndShiftGestureDetector mDetector = null;
 	protected Matrix mMatrix = null;
 	public ZoomAndShiftImageView(Context context)
 	{
 		super(context);
-		init();
+		init(context, null);
 	}
 	public ZoomAndShiftImageView(Context context, AttributeSet attrs)
 	{
 		super(context, attrs);
-		init();
+		init(context, attrs);
 	}
-	protected void init()
+	protected void init(Context context, AttributeSet attrs)
 	{
-		mDetector = new ZoomAndShiftGestureDetector(this, null, 1);
-		mDetector.mode = ZoomAndShiftGestureDetector.SHIFTXY | ZoomAndShiftGestureDetector.ZOOMXY | ZoomAndShiftGestureDetector.ZOOMUNI;
-		mDetector.zoomX = 0.1F;
-		mDetector.zoomY = 0.1F;
-		mDetector.minZoomX = 0.1F;
-		mDetector.minZoomY = 0.1F;
-		mDetector.maxZoomX = 10F;
-		mDetector.maxZoomY = 10F;
-		mMatrix = new Matrix();
-		setScaleType(ImageView.ScaleType.MATRIX);
-	}
-	public void setZoom(float zoom)
-	{
-		mDetector.zoomX = zoom;
-		mDetector.zoomY = zoom;
-		if ((mWidth * mHeight) > 0)
+		float zoom = 1;
+		float minZoom = 0.5F;
+		float maxZoom = 4F;
+		float scrollFactor = 0.1F;
+		if (attrs != null)
 		{
-			updateShiftRange();
-			updateMatrix();
+			zoom = attrs.getAttributeFloatValue(null, "zoom", zoom);
+			Log.log("ZoomAndShiftImageView - zoom = %.3f", zoom);
+			minZoom = attrs.getAttributeFloatValue(null, "maxZoom", minZoom);
+			Log.log("ZoomAndShiftImageView - minZoom = %.3f", minZoom);
+			maxZoom = attrs.getAttributeFloatValue(null, "minZoom", maxZoom);
+			Log.log("ZoomAndShiftImageView - maxZoom = %.3f", maxZoom);
+			scrollFactor = attrs.getAttributeFloatValue(null, "scrollFactor", scrollFactor);
+			Log.log("ZoomAndShiftImageView - scrollFactor = %.3f", scrollFactor);
 		}
+		mDetector.mode = ZoomAndShiftGestureDetector.SHIFTXY | ZoomAndShiftGestureDetector.ZOOMXY | ZoomAndShiftGestureDetector.ZOOMUNI;
+		mDetector.updateZoomRangeUni(zoom, minZoom, maxZoom);
+		mDetector.scrollFactor = scrollFactor;
+		mMatrix = new Matrix();
 	}
-	@Override public void setImageDrawable(Drawable drawable)
+	public void setImageDrawable(Drawable drawable)
 	{
-		super.setImageDrawable(drawable);
 		mImage = drawable;
 		if (mImage != null)
 		{
 			mImageWidth = mImage.getIntrinsicWidth();
 			mImageHeight = mImage.getIntrinsicHeight();
+			mImage.setBounds(0, 0, mImageWidth, mImageHeight);
 		}
 		else
 		{
 			mImageWidth = 0;
 			mImageHeight = 0;
 		}
-		updateZoomRange();
-		updateShiftRange();
-		updateMatrix();
+		onZoom(mDetector.zoomX, mDetector.zoomY, mDetector.shiftX, mDetector.shiftY);
 	}
-	@Override protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec)
+	@Override protected void onDraw(Canvas canvas)
 	{
-		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-		int modeW = MeasureSpec.getMode(widthMeasureSpec);
-		int sizeW = MeasureSpec.getSize(widthMeasureSpec);
-		int modeH = MeasureSpec.getMode(heightMeasureSpec);
-		int sizeH = MeasureSpec.getSize(heightMeasureSpec);
-		int w = getSuggestedMinimumWidth();
-		int h = getSuggestedMinimumHeight();
-		if ((modeW == View.MeasureSpec.EXACTLY) || ((modeW == View.MeasureSpec.AT_MOST) && (w == 0)))
-			w = sizeW;
-		if ((modeH == View.MeasureSpec.EXACTLY) || ((modeH == View.MeasureSpec.AT_MOST) && (h == 0)))
-			h = sizeH;
-		setMeasuredDimension(w, h);
+		super.onDraw(canvas);
+		if (mImage == null) return;
+		if ((mWidth * mHeight) == 0) return;
+		if ((mImageWidth * mImageHeight) == 0) return;
+		canvas.setMatrix(mMatrix);
+		mImage.draw(canvas);
 	}
-	@Override protected void onSizeChanged(int w, int h, int oldw, int oldh)
-	{
-		super.onSizeChanged(w, h, oldw, oldh);
-		mWidth = w;
-		mHeight = h;
-		if ((oldw * oldh) == 0)
-			updateZoomRange();
-		if ((mWidth * mHeight) > 0)
-		{
-			updateShiftRange();
-			updateMatrix();
-		}
-	}
-	@Override public boolean onTouchEvent(MotionEvent event)
-	{
-		if (mDetector.onTouch(this, event)) return true;
-		return super.onTouchEvent(event);
-	}
+	
 	public void onZoom(float zoomX, float zoomY, float shiftX, float shiftY)
 	{
-		updateShiftRange();
+		mDetector.updateShiftRange(mWidth, mHeight, mImageWidth * zoomX, mImageHeight * zoomY);
 		updateMatrix();
+		invalidate();
 	}
 	public void onShift(float zoomX, float zoomY, float shiftX, float shiftY)
 	{
 		updateMatrix();
-	}
-	protected void updateZoomRange()
-	{
-		if ((mWidth * mHeight) == 0) return;
-		if ((mImageWidth * mImageHeight) == 0) return;
-		float zoomToFitX = (float)mWidth / mImageWidth;
-		float zoomToFitY = (float)mHeight / mImageHeight;
-		float minZoom = (zoomToFitX < zoomToFitY)?zoomToFitX:zoomToFitY;
-		if (minZoom > 1) minZoom = 1;
-		float maxZoom = 2;
-		mDetector.minZoomX = minZoom;
-		mDetector.minZoomY = minZoom;
-		mDetector.maxZoomX = maxZoom;
-		mDetector.maxZoomY = maxZoom;
-		mDetector.zoomX = minZoom;
-		mDetector.zoomY = minZoom;
-	}
-	protected void updateShiftRange()
-	{
-		if ((mWidth * mHeight) == 0) return;
-		if ((mImageWidth * mImageHeight) == 0) return;
-		mDetector.maxShiftX = (mImageWidth * mDetector.zoomX) - mWidth;
-		mDetector.maxShiftY = (mImageHeight * mDetector.zoomY) - mHeight;
-		if (mDetector.maxShiftX < 0)
-		{
-			mDetector.maxShiftX = mDetector.maxShiftX / 2;
-			mDetector.minShiftX = mDetector.maxShiftX;
-			mDetector.shiftX = mDetector.minShiftX;
-		}
-		else
-			mDetector.minShiftX = 0;
-		if (mDetector.maxShiftY < 0)
-		{
-			mDetector.maxShiftY = mDetector.maxShiftY / 2;
-			mDetector.minShiftY = mDetector.maxShiftY;
-			mDetector.shiftY = mDetector.minShiftY;
-		}
-		else
-			mDetector.minShiftY = 0;
-		if (mDetector.shiftX > mDetector.maxShiftX)
-			mDetector.shiftX = mDetector.maxShiftX;
-		if (mDetector.shiftY > mDetector.maxShiftY)
-			mDetector.shiftY = mDetector.maxShiftY;
-		if (mDetector.shiftX < mDetector.minShiftX)
-			mDetector.shiftX = mDetector.minShiftX;
-		if (mDetector.shiftY < mDetector.minShiftY)
-			mDetector.shiftY = mDetector.minShiftY;
+		invalidate();
 	}
 	protected void updateMatrix()
 	{
 		mMatrix.reset();
 		mMatrix.preScale(mDetector.zoomX, mDetector.zoomY);
 		mMatrix.postTranslate(-mDetector.shiftX, -mDetector.shiftY);
-		setImageMatrix(mMatrix);
 	}
 }
 

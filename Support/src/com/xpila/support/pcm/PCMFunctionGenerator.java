@@ -67,6 +67,8 @@ implements IPCMProducer
 		}
 		return true;
 	}
+	public IPCMData outputData()
+	{ return null; }
 	public PCMFormat outputFormat()
 	{ return mFormat; }
 	public int read(Object buffer, int position, int size)

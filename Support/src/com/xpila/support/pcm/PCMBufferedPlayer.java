@@ -8,6 +8,7 @@ extends PCMThreadedPlayer
 	protected byte[] mByteBuffer = null;
 	protected short[] mShortBuffer = null;
 	protected int mChunkSize = 0;
+	protected boolean mWriteToSlave = false;
 	@Override public boolean open(int streamType, PCMFormat format, int bufferSize)
 	{ return open(streamType, format, bufferSize, 0); }
 	public boolean open(int streamType, PCMFormat format, int bufferSize, int chunkSize)
@@ -34,6 +35,10 @@ extends PCMThreadedPlayer
 	{ return mChunkSize; }
 	public void setChunkSize(int chunkSize)
 	{ mChunkSize = chunkSize; }
+	public boolean getWriteToSlave()
+	{ return mWriteToSlave; }
+	public void setWriteToSlave(boolean writeToSlave)
+	{ mWriteToSlave = writeToSlave; }
 	protected void playing()
 	{
 		int readed = 0;
@@ -44,6 +49,13 @@ extends PCMThreadedPlayer
 				readed = mIn.read(mByteBuffer, 0, mChunkSize);
 			if (readed > 0)
 				written = mTrack.write(mByteBuffer, 0, readed);
+			if (mSlavePlayer != null)
+			{
+				if (mWriteToSlave)
+					mSlavePlayer.mTrack.write(mByteBuffer, 0, readed);
+				else
+					mSlavePlayer.playing();
+			}
 			if (readed < mChunkSize)
 				mPlaying = false;
 		}
@@ -53,6 +65,13 @@ extends PCMThreadedPlayer
 				readed = mIn.read(mShortBuffer, 0, mChunkSize / 2);
 			if (readed > 0)
 				written = mTrack.write(mShortBuffer, 0, readed);
+			if (mSlavePlayer != null)
+			{
+				if (mWriteToSlave)
+					mSlavePlayer.mTrack.write(mShortBuffer, 0, readed);
+				else
+					mSlavePlayer.playing();
+			}
 			if (readed < mChunkSize / 2)
 				mPlaying = false;
 		}
