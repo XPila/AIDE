@@ -2,4 +2,4 @@
 /gen
 /jar
 /_jni
-com.xpila.support.jar
+/*.err
