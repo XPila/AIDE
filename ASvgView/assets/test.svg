@@ -1,0 +1,12 @@
+<svg xmlns='http://www.w3.org/2000/svg'
+ viewBox='0 0 640 480'
+ width='640px'
+ height='480px' >
+ <g transform='scale(0.00714 10)'>
+  <rect x='0' y='0' width='89600' height='48' fill='#e0e0e0' />
+  <rect x='1200' y='4' width='86400' height='40' fill='#c0c0c0' />
+  <g transform='translate(1200 34) scale(1 -1)'>
+   <path d='M 0 0 L 86400 30' stroke='red' stroke-width='0.1'/>
+  </g>
+ </g>
+</svg>

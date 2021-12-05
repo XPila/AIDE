@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+	<item android:id="@+id/refresh"
+		android:title="Refresh" />
+	<item android:id="@+id/savejpg"
+		android:title="Save as JPG" />
+	<item android:id="@+id/savepng"
+		android:title="Save as PNG" />
+	<item android:id="@+id/saveico"
+		android:title="Save as ICO" android:visibility="visible"/>
+	<item android:id="@+id/background"
+		android:title="Background" >
+		<menu>
+			<item android:id="@+id/bkgnd_transparent"
+				android:title="Transparent" />
+			<item android:id="@+id/bkgnd_black"
+				android:title="Black" />
+			<item android:id="@+id/bkgnd_white"
+				android:title="White" />
+			<item android:id="@+id/bkgnd_black_25"
+				android:title="25% black" />
+			<item android:id="@+id/bkgnd_black_50"
+				android:title="50% black" />
+			<item android:id="@+id/bkgnd_black_75"
+				android:title="75% black" />
+		</menu>
+	</item>
+	<item android:id="@+id/transparency"
+		android:title="Transparency" >
+		<menu>
+			<item android:id="@+id/trans_alpha"
+				android:title="Alpha" />
+			<item android:id="@+id/trans_black"
+				android:title="Black" />
+			<item android:id="@+id/trans_white"
+				android:title="White" />
+		</menu>
+	</item>
+	<item android:id="@+id/jpgquality"
+		android:title="Jpg quality" >
+		<menu>
+			<item android:id="@+id/jpgq_30"
+				android:title="30%" />
+			<item android:id="@+id/jpgq_50"
+				android:title="50%" />
+			<item android:id="@+id/jpgq_75"
+				android:title="75%" />
+			<item android:id="@+id/jpgq_90"
+				android:title="90%" />
+			<item android:id="@+id/jpgq_100"
+				android:title="100%" />
+		</menu>
+	</item>
+	<item android:id="@+id/viewmode"
+		android:title="View mode" >
+		<menu>
+			<item android:id="@+id/vmode_wvurl"
+				android:title="WebView (url)" />
+			<item android:id="@+id/vmode_wvhtm"
+				android:title="WebView (htm)" />
+			<item android:id="@+id/vmode_asvg"
+				android:title="Android SVG" />
+		</menu>
+	</item>
+	<item android:id="@+id/quit"
+		android:title="Quit" />
+	<item android:id="@+id/exportapkicons"
+		android:title="Export apk icons" android:visibility="invisible"/>
+</menu>
